@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Countries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .country {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .country h3 {
+            margin: 0;
+        }
+        .country p {
+            margin: 10px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Search for Countries in South America</h1>
+    <input type="text" id="searchQuery" placeholder="Enter country name to search...">
+    <button id="searchButton">Search</button>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const query = document.getElementById('searchQuery').value.trim();
+            
+            if (!query) {
+                document.getElementById('results').innerHTML = "Please enter a country name.";
+                return;
+            }
+
+            // Use fetch to request countries with a name query
+            fetch(`http://localhost/in_class_19/api/countries?name=${query}`)
+                .then(response => response.json())
+                .then(countries => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = ''; // Clear previous results
+
+                    if (countries.length > 0) {
+                        countries.forEach(country => {
+                            const countryDiv = document.createElement('div');
+                            countryDiv.classList.add('country');
+                            countryDiv.innerHTML = `
+                                <h3>${country.country_name}</h3>
+                                <p>${country.description}</p>
+                            `;
+                            resultsDiv.appendChild(countryDiv);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = 'No countries found.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = 'An error occurred while fetching countries.';
+                });
+        });
+    </script>
+
+</body>
+</html>
